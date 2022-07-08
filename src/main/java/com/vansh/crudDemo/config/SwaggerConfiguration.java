@@ -24,6 +24,7 @@ public class SwaggerConfiguration {
                 .build()
                 .apiInfo(getInfo());
     }
+
     private ApiInfo getInfo() {
         return new ApiInfo(
                 "My First SpringBoot CRUD Application",
