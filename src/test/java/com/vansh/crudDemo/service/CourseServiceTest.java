@@ -2,11 +2,13 @@ package com.vansh.crudDemo.service;
 
 import com.vansh.crudDemo.entity.Course;
 import com.vansh.crudDemo.repository.CourseRepositoryInterface;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +20,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CourseServiceTest {
-    @MockBean
+    @Mock
     private CourseRepositoryInterface courseRepositoryInterface;
-    @Autowired
+    @InjectMocks
     private CourseService courseService;
 
     @Test
+    @Order(1)
     public void testAddCourse() {
         Course expectedResult = new Course(1, "Java", "Rs.2000", "2months");
 
@@ -33,8 +37,10 @@ public class CourseServiceTest {
 
         assertEquals(expectedResult, actualResult);
     }
+
     @Test
-    public void testAddCourseNegative(){
+    @Order(2)
+    public void testAddCourseNegative() {
         Course expectedResult = new Course(1, "Java", "Rs.2000", "2months");
 
         when(courseRepositoryInterface.save(any())).thenReturn(null);
@@ -44,6 +50,7 @@ public class CourseServiceTest {
     }
 
     @Test
+    @Order(3)
     public void testGetAllCourse() {
         List<Course> expectedResult = new ArrayList<>();
         Course course = new Course(1, "Java", "Rs.2000", "2months");
@@ -58,6 +65,7 @@ public class CourseServiceTest {
     }
 
     @Test
+    @Order(4)
     public void testGetCourse() {
         Course expectedResult = new Course(1, "Java", "Rs.2000", "2months");
 
@@ -68,6 +76,7 @@ public class CourseServiceTest {
     }
 
     @Test
+    @Order(5)
     public void testUpdateCourse() {
         Course expectedResult = new Course(1, "Java", "Rs.2000", "2months");
 
@@ -79,6 +88,7 @@ public class CourseServiceTest {
     }
 
     @Test
+    @Order(6)
     public void testDeleteCourse() {
         Course course = new Course(1, "Java", "Rs.2000", "2months");
         courseService.deleteCourse(course.getId());

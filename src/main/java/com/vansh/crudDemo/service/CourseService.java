@@ -51,11 +51,13 @@ public class CourseService implements CourseServiceInterface {
     }
 
     @Override
-    public void deleteCourse(int id) {
+    public String deleteCourse(int id) {
         try {
             courseRepository.deleteById(id);
+            return "Success";
         } catch (Exception e) {
             logger.error("Error in deleteCourse() method - " + e.getMessage());
+            return "Failure";
         }
     }
 

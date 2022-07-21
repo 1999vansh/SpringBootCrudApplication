@@ -2,8 +2,7 @@ package com.vansh.crudDemo.controller;
 
 import com.vansh.crudDemo.entity.Course;
 import com.vansh.crudDemo.service.CourseServiceInterface;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/courses")
-@Api(tags = "My-Course-Controller")
 public class CourseController {
     @Autowired
     private CourseServiceInterface courseServiceInterface;
@@ -23,75 +21,65 @@ public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 
     @GetMapping("/")
-    @ApiOperation(value = "Get all courses details")
+    @Operation(summary = "Get all courses details")
     public ResponseEntity<List<Course>> getAllCourse() {
-        logger.trace("Calling and starting getAllCourse()");
-        List<Course> courses;
-        try {
-            courses = courseServiceInterface.getAllCourse();
-            return new ResponseEntity<>(courses, HttpStatus.FOUND);
-        } catch (Exception e) {
-            logger.error("Error in getAllCourse() endpoint :" + e.getMessage());
+        logger.info("Calling and starting getAllCourse()");
+        List<Course> courses = courseServiceInterface.getAllCourse();
+        if (courses == null) {
+            logger.error("Unable to fetch courses");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "Get course details by id")
+    @Operation(summary = "Get course details by id")
     public ResponseEntity<Course> getCourse(@PathVariable int id) {
         logger.info("Calling and starting getCourse()");
-        Course course;
-        try {
-            course = courseServiceInterface.getCourse(id);
-            return new ResponseEntity<>(course, HttpStatus.FOUND);
-        } catch (Exception e) {
-            logger.error("Error in getCourse() endpoint :" + e.getMessage());
+        Course course = courseServiceInterface.getCourse(id);
+        if (course == null) {
+            logger.error("Unable to fetch course");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
 
     @PostMapping("/")
-    @ApiOperation(value = "Add course details")
+    @Operation(summary = "Add course details")
     public ResponseEntity<Course> addCourse(@RequestBody Course c) {
         logger.info("Calling and starting addCourse()");
-        Course course;
-        try {
-            course = courseServiceInterface.addCourse(c);
-            return new ResponseEntity<>(course, HttpStatus.CREATED);
-        } catch (Exception e) {
-            logger.error("Error in addCourse() endpoint :" + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        Course course = courseServiceInterface.addCourse(c);
+        if (course == null) {
+            logger.error("Unable to fetch course");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
 
     @PutMapping("/{id}")
-    @ApiOperation(value = "Update course details by id")
+    @Operation(summary = "Update course details by id")
     public ResponseEntity<Course> updateCourse(@PathVariable int id, @RequestBody Course c) {
         logger.info("Calling and starting updateCourse()");
-        Course course;
-        try {
-            course = courseServiceInterface.updateCourse(id, c);
-            return new ResponseEntity<>(course, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("Error in updateCourse() endpoint :" + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        Course course = courseServiceInterface.updateCourse(id, c);
+        if (course == null) {
+            logger.error("Unable to update course");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
 
     @DeleteMapping("/{id}")
-    @ApiOperation(value = "Delete course details by id")
+    @Operation(summary = "Delete course details by id")
     public ResponseEntity<String> deleteCourse(@PathVariable int id) {
         logger.info("Calling and starting deleteCourse()");
-        try {
-            courseServiceInterface.deleteCourse(id);
+        String response = courseServiceInterface.deleteCourse(id);
+        if (response == "Success") {
             return new ResponseEntity<>("Course Deleted Successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("Error in deleteCourse() endpoint :" + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
